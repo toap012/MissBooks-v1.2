@@ -3,11 +3,16 @@ import { bookService } from '../services/book.service.js'
 import BookList from '../cmps/BookList.js'
 import BookDetails from '../cmps/BookDetails.js'
 import BookFilter from '../cmps/BookFilter.js'
+import AddBookForm from '../cmps/AddBookForm.js'
 
 export default {
     template: `
         <section class="book-index">
             <h2>Book index page</h2>
+            <button @click="isForm=true">Add Book</button>
+            <AddBookForm
+            v-if="isForm"
+            @addBook="addBook"/>
             <BookFilter @filter="setFilterBy"/>
             <BookList
             v-if="books"
@@ -18,14 +23,13 @@ export default {
             <BookDetails
             v-if="selectedBook"
             :book ="selectedBook"
-            @close="selectedBook=null"
-
-            />
-
+            @close="selectedBook=null"/>
         </section>
     `,
     data() {
         return {
+            isForm: false,
+
             books: null,
             selectedBook: null,
             filterBy: {},
@@ -45,6 +49,11 @@ export default {
         },
         setFilterBy(filterBy) {
             this.filterBy = filterBy
+        },
+        addBook(book) {
+            bookService.save(book)
+                .then(savedBook => this.books.push(savedBook))
+            this.isForm = false
         }
 
     },
@@ -69,6 +78,7 @@ export default {
         BookList,
         BookDetails,
         BookFilter,
+        AddBookForm,
     }
 
 }
