@@ -1,5 +1,6 @@
 import { utilService } from './util.service.js'
 import { storageService } from './async-storage.service.js'
+import booksData from '../books.json' assert{type: 'json'}
 
 const PAGE_SIZE = 5
 const BOOK_KEY = 'bookDB'
@@ -69,7 +70,7 @@ function getEmptyBook(title = '', description = utilService.makeLorem(5)) {
         id: '',
         title,
         description,
-        thumbnail:`img/book${utilService.getRandomIntInclusive(1, 4)}.jpg`,
+        thumbnail: `img/book${utilService.getRandomIntInclusive(1, 4)}.jpg`,
         listPrice: {
             amount: utilService.getRandomIntInclusive(1, 500),
             currencyCode: "EUR",
@@ -113,11 +114,12 @@ function getBookCountBySpeedMap() {
 function _createBooks() {
     let books = utilService.loadFromStorage(BOOK_KEY)
     if (!books || !books.length) {
-        books = []
-        books.push(_createBook('Harry Potter'))
-        books.push(_createBook('Hunger Games'))
-        books.push(_createBook('The Alchemist'))
-        books.push(_createBook('Art Of War'))
+        // books = []
+        // books.push(_createBook('Harry Potter'))
+        // books.push(_createBook('Hunger Games'))
+        // books.push(_createBook('The Alchemist'))
+        // books.push(_createBook('Art Of War'))
+        books = booksData
         utilService.saveToStorage(BOOK_KEY, books)
     }
 }
