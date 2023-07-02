@@ -64,14 +64,14 @@ function save(book) {
     }
 }
 
-function getEmptyBook(title = '', description = makeLorem(5)) {
+function getEmptyBook(title = '', description = utilService.makeLorem(5)) {
     return {
         id: '',
         title,
         description,
-        // thumbnail: "http://ca.org/books-photos/20.jpg",
+        thumbnail:`img/book${utilService.getRandomIntInclusive(1, 4)}.jpg`,
         listPrice: {
-            amount: getRandomIntInclusive(1, 500),
+            amount: utilService.getRandomIntInclusive(1, 500),
             currencyCode: "EUR",
             isOnSale: false
         }
@@ -122,7 +122,7 @@ function _createBooks() {
     }
 }
 
-function _createBook(title, description = makeLorem(5)) {
+function _createBook(title, description = utilService.makeLorem(5)) {
     const book = getEmptyBook(title, description)
     book.id = utilService.makeId()
     return book
