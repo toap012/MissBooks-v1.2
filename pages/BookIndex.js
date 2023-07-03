@@ -1,39 +1,26 @@
 import { bookService } from '../services/book.service.js'
+import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 
 import BookList from '../cmps/BookList.js'
-import BookDetails from '../cmps/BookDetails.js'
 import BookFilter from '../cmps/BookFilter.js'
-import AddBookForm from '../cmps/AddBookForm.js'
 
 export default {
     template: `
         <section class="book-index">
             <h2>Book index page</h2>
-            <button @click="isForm=true">Add Book</button>
-            <AddBookForm
-            v-if="isForm"
-            @addBook="addBook"/>
+            <RouterLink to="/book/edit">Add Book</RouterLink> 
+        
             <BookFilter @filter="setFilterBy"/>
             <BookList
-            v-if="books"
-            :books="filteredBooks"
-            @remove="removeBook"
-            @select="selectBook"
-            />
-            <BookDetails
-            v-if="selectedBook"
-            :book ="selectedBook"
-            @close="selectedBook=null"/>
+                v-if="books"
+                :books="filteredBooks"
+                @remove="removeBook"/>
         </section>
     `,
     data() {
         return {
-            isForm: false,
-
             books: null,
-            selectedBook: null,
             filterBy: {},
-
         }
     },
     methods: {
@@ -42,26 +29,29 @@ export default {
                 .then(() => {
                     const idx = this.books.findIndex(book => book.id === bookId)
                     this.books.splice(idx, 1)
+                    showSuccessMsg('Book removed')
                 })
-        },
-        selectBook(bookId) {
-            this.selectedBook = this.books.find(book => book.id === bookId)
+                .catch(err => {
+                    showErrorMsg('Cannot remove Book')
+                })
         },
         setFilterBy(filterBy) {
             this.filterBy = filterBy
         },
-        addBook(book) {
-            bookService.save(book)
-                .then(savedBook => this.books.push(savedBook))
-            this.isForm = false
-        }
 
     },
     computed: {
         filteredBooks() {
+            //filter validaition
+            if (!this.filterBy) return this.books
+
+            //filtering
             let filteredBooks = this.books
-            const regex = new RegExp(this.filterBy.txt, 'i')
-            filteredBooks = filteredBooks.filter(book => regex.test(book.title))
+
+            if (this.filterBy.txt) {
+                const regex = new RegExp(this.filterBy.txt, 'i')
+                filteredBooks = filteredBooks.filter(book => regex.test(book.title))
+            }
 
             if (this.filterBy.price) {
                 filteredBooks = filteredBooks.filter(book => book.listPrice.amount <= this.filterBy.price)
@@ -76,9 +66,7 @@ export default {
     },
     components: {
         BookList,
-        BookDetails,
         BookFilter,
-        AddBookForm,
     }
 
 }
