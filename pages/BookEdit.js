@@ -4,7 +4,7 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 export default {
     template: `
 <form @submit.prevent="addBook" class="car-edit">
-
+    <h2>{{(book.id)? 'Edit' : 'Add'}} a book</h2>
     <fieldset>
         <legend>Book title</legend>
         <input v-model="book.title" placeholder="Book title" />
@@ -23,7 +23,7 @@ export default {
         <input type="radio" value="false" v-model="book.listPrice.isOnSale" /> No...
     </fieldset>
     <RouterLink to="/book">Cancel</RouterLink> 
-    <button :disabled="!isValid">Add Book</button> 
+    <button :disabled="!isValid">Save</button> 
 </form>   
         `,
     data() {
@@ -32,11 +32,15 @@ export default {
         }
     },
     created() {
-        const { book } = this.$route.params
-        if (!book) return
-        carService.get(book)
+        const { bookId } = this.$route.params
+        console.log(this.$route);
+        console.log(bookId);
+        if (!bookId) return
+        bookService.get(bookId)
             .then(book => {
+                console.log(book);
                 this.book = book
+                showSuccessMsg('getting book...')
             })
             .catch(err => {
                 showErrorMsg('Cannot load book for edit')
@@ -45,16 +49,16 @@ export default {
     },
     methods: {
         addBook() {
-                bookService.save(this.book)
-                    .then(savedBook => {
-                        console.log('Saved Book', savedBook)
-                        showSuccessMsg('Book saved')
-                        this.$router.push('/book')
-                    })
-                    .catch(err => {
-                        showErrorMsg('Cannot save Book')
-                    })
-            
+            bookService.save(this.book)
+                .then(savedBook => {
+                    console.log('Saved Book', savedBook)
+                    showSuccessMsg('Book saved')
+                    this.$router.push('/book')
+                })
+                .catch(err => {
+                    showErrorMsg('Cannot save Book')
+                })
+
         }
     },
     computed: {
