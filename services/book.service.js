@@ -17,6 +17,9 @@ export const bookService = {
     get,
     remove,
     save,
+    addReview,
+    removeReview,
+    getEmptyReview,
     getEmptyBook,
     getNextBookId,
     getFilterBy,
@@ -65,11 +68,41 @@ function save(book) {
     }
 }
 
+function addReview(bookId, review) {
+    return get(bookId)
+        .then(book => {
+            if (!book.reviews) {
+                book.reviews = []
+            }
+            book.reviews.push(review)
+            return save(book)
+        })
+}
+
+function removeReview(bookId, reviewId) {
+    return get(bookId)
+        .then(book => {
+            const idx = book.reviews.findIndex(review => review.id === reviewId)
+            book.reviews.splice(idx, 1)
+            return save(book)
+        })
+}
+
+function getEmptyReview() {
+    return {
+        id: utilService.makeId(3),
+        fullname: '',
+        rating: 1,
+        readAt: ''
+    }
+}
+
 function getEmptyBook(title = '', description = utilService.makeLorem(5)) {
     return {
         id: '',
         title,
         description,
+        reviews: [],
         thumbnail: `img/book${utilService.getRandomIntInclusive(1, 4)}.jpg`,
         listPrice: {
             amount: utilService.getRandomIntInclusive(1, 500),
