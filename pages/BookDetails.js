@@ -3,18 +3,26 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 
 import ReviewList from '../cmps/ReviewList.js'
 import AddReview from '../cmps/AddReview.js'
+import LongText from '../cmps/LongText.js'
 
 export default {
     template: `
-        <section class="book-details" v-if="book">
+    <section v-if="book">
+        <section class="book-details">
             <h2>{{ book.title }}</h2>
-            <h3>{{ book.description }}</h3>
+            <LongText :text="book.description"></LongText>
+            <h2> {{book.pageCount}} Pages- <span> {{pageCountMsg}}</span></h2>
+            <h2> {{book.publishedDate}} <span>{{publishedDateMsg}}</span></h2>
             <img :src="book.thumbnail" alt="book">
-            <h3>Price: {{ book.listPrice.amount }}$</h3>
-            <ReviewList :reviews="book.reviews" @remove="removeReview" v-if="book.reviews"/>
-            <AddReview @add="addReview"/>
-            <RouterLink to="/book">Back to List</RouterLink>
+            <h2 v-if="book.listPrice.isOnSale" class="green">ON SALE!</h2>
+            <h2 :class="colorClass">Price: {{getPrice}}</h2>
         </section>
+        <section class="reviews">
+            <ReviewList :reviews="book.reviews" @remove="removeReview" v-if="book.reviews" class="book-reviews"/>
+            <AddReview @add="addReview"/>
+        </section>
+        <RouterLink class="route" to="/book">Back to List</RouterLink>
+    </section>
     `,
     data() {
         return {
@@ -66,8 +74,65 @@ export default {
         }
 
     },
+    computed: {
+        pageCountMsg() {
+            const bookLength = this.book.pageCount
+            if (bookLength > 500) return 'Long reading'
+            else if (bookLength > 200) return 'Decent Reading'
+            else if (bookLength < 100) return 'Light Reading'
+        },
+        publishedDateMsg() {
+            const publishedDate = this.book.publishedDate
+            const currYear = new Date().getFullYear()
+            const diff = currYear - publishedDate
+            if (diff > 10) return 'Vintage'
+            else if (diff < 1) return 'New!'
+        },
+        colorClass() {
+            const price = this.book.listPrice.amount
+            if (price > 150) return 'red'
+            else if (price < 20) return 'green'
+            else return ''
+        },
+        getPrice() {
+            const {
+                listPrice: { currencyCode, amount },
+                language,
+            } = this.book
+            return new Intl.NumberFormat(language, {
+                style: 'currency',
+                currency: currencyCode,
+            }).format(amount)
+        },
+        currency() {
+            let curr = ''
+            const type = this.book.listPrice.currencyCode
+
+            new Intl.NumberFormat('ja-JP', {
+                style: 'currency',
+                currency: 'JPY',
+            }).format(number)
+
+            // check for shorter way maybe intl func
+            switch (type) {
+                case 'EUR':
+                    curr = '€'
+                    break
+                case 'USD':
+                    curr = '$'
+                    break
+                case 'ILS':
+                    curr = '₪'
+                    break
+                default:
+                    curr = '$'
+            }
+            return curr
+        },
+    },
     components: {
         AddReview,
-        ReviewList
+        ReviewList,
+        LongText,
     }
 }

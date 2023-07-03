@@ -1,0 +1,18 @@
+.book-details{
+    padding: 1rem;
+    text-align: center;
+    background-color: rgb(215, 200, 220);
+}
+.reviews{
+    background-color: var(--columbia-blue);
+}
+.book-reviews{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+.book-reviews ul li {
+    padding: 10px;
+    background-color: var(--air-force-blue);
+}

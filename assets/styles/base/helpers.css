@@ -26,6 +26,17 @@
     color: var(--clr1);
 }
 
+/* routing helpers */
+.route {
+    margin: 1rem;
+    border: solid 1px gray;
+    border-radius: 5px;
+}
+.route:hover {
+    background-color: gray;
+    color: whitesmoke;
+}
+
 /* list helpers */
 
 .clean-list {
@@ -54,4 +65,12 @@
 
 .fa.fa-behance::before {
     content: '\f1b4';
+}
+
+/* color classes */
+.red{
+    color: red;
+}
+.green{
+    color: green;
 }

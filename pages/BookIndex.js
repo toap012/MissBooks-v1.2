@@ -7,9 +7,8 @@ import BookFilter from '../cmps/BookFilter.js'
 export default {
     template: `
         <section class="book-index">
-            <h2>Book index page</h2>
-            <RouterLink to="/book/edit">Add Book</RouterLink> 
-        
+            <h2>Book index page </h2>
+            <RouterLink to="/book/edit" class="route">Add Book</RouterLink> 
             <BookFilter @filter="setFilterBy"/>
             <BookList
                 v-if="books"
