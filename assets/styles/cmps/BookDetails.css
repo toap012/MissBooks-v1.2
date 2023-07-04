@@ -6,11 +6,12 @@
 .reviews{
     background-color: var(--columbia-blue);
 }
-.book-reviews{
+.review-list{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 10px;
     padding: 10px;
+
 }
 .book-reviews ul li {
     padding: 10px;

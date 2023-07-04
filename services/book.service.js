@@ -54,6 +54,7 @@ function query() {
 
 function get(bookId) {
     return storageService.get(BOOK_KEY, bookId)
+        .then(book => _setNextPrevBookId(book))
 }
 
 function remove(bookId) {
@@ -128,6 +129,17 @@ function getNextBookId(bookId) {
             var idx = books.findIndex(book => book.id === bookId)
             if (idx === books.length - 1) idx = -1
             return books[idx + 1].id
+        })
+}
+function _setNextPrevBookId(book) {
+    return storageService.query(BOOK_KEY)
+        .then(books => {
+            const bookIdx = books.findIndex(currbook => currbook.id === book.id)
+            book.nextBookId = books[bookIdx + 1] ? books[bookIdx + 1].id : books[0].id
+            book.prevBookId = books[bookIdx - 1]
+                ? books[bookIdx - 1].id
+                : books[books.length - 1].id
+            return book
         })
 }
 

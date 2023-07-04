@@ -8,6 +8,8 @@ import LongText from '../cmps/LongText.js'
 export default {
     template: `
     <section v-if="book">
+        <RouterLink :to="'/book/' + book.nextBookId">Next Book</RouterLink> |
+        <RouterLink :to="'/book/' + book.prevBookId">Prev Book</RouterLink> |
         <section class="book-details">
             <h2>{{ book.title }}</h2>
             <LongText :text="book.description"></LongText>
@@ -18,7 +20,8 @@ export default {
             <h2 :class="colorClass">Price: {{getPrice}}</h2>
         </section>
         <section class="reviews">
-            <ReviewList :reviews="book.reviews" @remove="removeReview" v-if="book.reviews" class="book-reviews"/>
+        <h1>Book reviews:</h1>
+            <ReviewList :reviews="book.reviews" @remove="removeReview" v-if="book.reviews"/>
             <AddReview @add="addReview"/>
         </section>
         <RouterLink class="route" to="/book">Back to List</RouterLink>
@@ -30,21 +33,21 @@ export default {
         }
     },
     created() {
-        const { bookId } = this.$route.params
-        bookService.get(bookId)
-            .then(book => {
-                this.book = book
-            })
-            .catch(err => {
-                alert('Cannot load book')
-                this.$router.push('/book')
-            })
+        this.loadBook()
     },
     methods: {
+        loadBook() {
+            const { bookId } = this.$route.params
+            bookService.get(bookId)
+                .then(book => {
+                    this.book = book
+                })
+                .catch(err => {
+                    alert('Cannot load book')
+                    this.$router.push('/book')
+                })
+        },
         addReview(review) {
-            console.log(review);
-            console.log(this.book.id);
-            console.log(this.book.review);
             if (!this.book.reviews) {
                 this.book.reviews = []
             }
@@ -74,7 +77,15 @@ export default {
         }
 
     },
+    watch: {
+        bookId() {
+            this.loadBook()
+        }
+    },
     computed: {
+        bookId() {
+            return this.$route.params.bookId
+        },
         pageCountMsg() {
             const bookLength = this.book.pageCount
             if (bookLength > 500) return 'Long reading'

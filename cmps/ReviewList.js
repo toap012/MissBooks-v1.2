@@ -3,9 +3,8 @@ export default {
     props: ['reviews'],
     template: `
 
-<section class="review-list">
-    <h1>Book reviews:</h1>
-<ul>
+<section class="book-reviews">
+<ul class="review-list">
     <li v-for="review in reviews" :key="review.id">
         <h1>{{review.fullname}}</h1>
         <h5>read at: {{review.readAt}}</h5>
@@ -17,9 +16,9 @@ export default {
 </ul>
 </section>
 `,
-methods:{
-    onRemoveReview(reviewId){
-        this.$emit('remove', reviewId)
+    methods: {
+        onRemoveReview(reviewId) {
+            this.$emit('remove', reviewId)
+        }
     }
-}
 }
