@@ -3,7 +3,7 @@ import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 
 export default {
     template: `
-<form @submit.prevent="addBook" class="car-edit">
+<form @submit.prevent="addBook" class="book-edit">
     <h2>{{(book.id)? 'Edit' : 'Add'}} a book</h2>
     <fieldset>
         <legend>Book title</legend>

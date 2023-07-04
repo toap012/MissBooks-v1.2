@@ -1,12 +1,14 @@
 import { bookService } from '../services/book.service.js'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 
+import bookAdd from '../cmps/bookAdd.js'
 import BookList from '../cmps/BookList.js'
 import BookFilter from '../cmps/BookFilter.js'
 
 export default {
     template: `
         <section class="book-index">
+            <bookAdd @addSearchedBook="addSearchedBook"></bookAdd>
             <h2>Book index page </h2>
             <RouterLink to="/book/edit" class="route">Add Book</RouterLink> 
             <BookFilter @filter="setFilterBy"/>
@@ -23,6 +25,10 @@ export default {
         }
     },
     methods: {
+        loadBooks() {
+            bookService.query()
+                .then(books => this.books = books)
+        },
         removeBook(bookId) {
             bookService.remove(bookId)
                 .then(() => {
@@ -37,6 +43,14 @@ export default {
         setFilterBy(filterBy) {
             this.filterBy = filterBy
         },
+        addSearchedBook(book) {
+            bookService.addGoogleBook({ ...book })
+                .then(book => {
+                    this.loadBooks()
+                    showSuccessMsg('Book added succesfully')
+                })
+                .catch((err) => showErrorMsg(err))
+        }
 
     },
     computed: {
@@ -57,15 +71,15 @@ export default {
             }
 
             return filteredBooks
-        }
+        },
     },
     created() {
-        bookService.query()
-            .then(books => this.books = books)
+        this.loadBooks()
     },
     components: {
         BookList,
         BookFilter,
+        bookAdd
     }
 
 }

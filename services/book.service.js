@@ -20,6 +20,7 @@ export const bookService = {
     addReview,
     removeReview,
     getEmptyReview,
+    addGoogleBook,
     getEmptyBook,
     getNextBookId,
     getFilterBy,
@@ -53,6 +54,7 @@ function query() {
 }
 
 function get(bookId) {
+
     return storageService.get(BOOK_KEY, bookId)
         .then(book => _setNextPrevBookId(book))
 }
@@ -96,6 +98,17 @@ function getEmptyReview() {
         rating: 1,
         readAt: ''
     }
+}
+
+function addGoogleBook(book) {
+    return get(book.id).then(book => {
+        console.log(book);
+        throw new Error(`Cannot add, book already exist... ${book}`)
+    }).catch(err => {
+        console.log(book);
+        console.log('book added');
+        return storageService.post(BOOK_KEY, book)
+    })
 }
 
 function getEmptyBook(title = '', description = utilService.makeLorem(5)) {
